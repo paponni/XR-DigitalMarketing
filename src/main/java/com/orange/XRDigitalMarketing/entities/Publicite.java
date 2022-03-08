@@ -1,18 +1,22 @@
 package com.orange.XRDigitalMarketing.entities;
 
-import jdk.jfr.Enabled;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import java.util.List;
+import javax.persistence.FetchType;
+import javax.persistence.ManyToOne;
 
 @Entity
 @Data @AllArgsConstructor @NoArgsConstructor
-public class Publicite extends Affichage{
+public class Publicite extends Pixel{
     private String nomPub ;
-    @ManyToMany(mappedBy = "publicite")
-    private List<Ticket> tickets;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Ticket ticket;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Admin admin;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Client client;
 }

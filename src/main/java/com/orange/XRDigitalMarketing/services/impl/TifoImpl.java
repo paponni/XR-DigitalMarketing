@@ -1,5 +1,6 @@
 package com.orange.XRDigitalMarketing.services.impl;
 
+import com.orange.XRDigitalMarketing.entities.FileUploadUtil;
 import com.orange.XRDigitalMarketing.entities.Tifo;
 import com.orange.XRDigitalMarketing.exceptions.TifoNotFoundException;
 import com.orange.XRDigitalMarketing.exceptions.TifoNotValidException;
@@ -7,8 +8,11 @@ import com.orange.XRDigitalMarketing.repos.TifoRepo;
 import com.orange.XRDigitalMarketing.services.ITifoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -19,14 +23,19 @@ public class TifoImpl implements ITifoService {
 
     private final TifoRepo tifoRepo;
 
+
     public TifoImpl(TifoRepo tifoRepo) {
         this.tifoRepo = tifoRepo;
     }
 
     @Override
-    public Tifo createTifo(Tifo tifo) {
+    public Tifo createTifo(Tifo tifo,MultipartFile multipartFile) throws IOException {
         log.info("save tifo : {}",tifo.getNomEquipe());
         LocalDate dateSystem = LocalDate.now();
+        String fileName = StringUtils.getFilename(multipartFile.getOriginalFilename());
+        tifo.setPhoto(fileName);
+        String uploadDir = "tifo-photos/"+tifo.getId();
+        FileUploadUtil.saveFile(uploadDir,fileName,multipartFile);
         if(tifo.getDateAffichage().compareTo(dateSystem)>=0 &&
             tifo.getHeureAffichge().compareTo(tifo.getTicket().getHeureMatch()) >=0
                 && tifo.getDureeAffichage() * 60 >0 && tifo.getDureeAffichage() * 60 < 5400)
@@ -55,6 +64,11 @@ public class TifoImpl implements ITifoService {
         else{
             throw new TifoNotValidException("invalid tifo ") ;
         }
+    }
+
+    @Override
+    public Tifo getTifo(Long id) {
+        return tifoRepo.findById(id).get();
     }
 
 

@@ -6,9 +6,10 @@ import com.orange.XRDigitalMarketing.exceptions.TifoNotFoundException;
 import com.orange.XRDigitalMarketing.exceptions.TifoNotValidException;
 import com.orange.XRDigitalMarketing.services.ITifoService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -22,8 +23,8 @@ public class TifoController {
     }
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    public Tifo createTifo(@RequestBody Tifo tifo){
-        return tifoService.createTifo(tifo);
+    public Tifo createTifo(@RequestBody Tifo tifo,@RequestParam("image") MultipartFile multipartFile) throws IOException {
+        return tifoService.createTifo(tifo,multipartFile);
     }
 
     @GetMapping("/tifos")
@@ -32,10 +33,17 @@ public class TifoController {
         return  tifoService.getTifos();
     }
 
+    @GetMapping("/tifos/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public Tifo loadTifo(@PathVariable("id") Long id){
+        return tifoService.getTifo(id);
+    }
+
     @PutMapping("/")
     @ResponseStatus(HttpStatus.OK)
     public Tifo updateTifo(@RequestBody Tifo tifo) throws TifoNotValidException, TifoNotFoundException {
         return tifoService.updateTifo(tifo);
     }
+
 
 }
