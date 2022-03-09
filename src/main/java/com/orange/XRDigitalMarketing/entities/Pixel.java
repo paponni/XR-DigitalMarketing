@@ -27,4 +27,5 @@ public class Pixel {
 
         return "/user-photos/" + id + "/" + photo;
     }
+
 }

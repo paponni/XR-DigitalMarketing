@@ -68,6 +68,7 @@ public class TifoImpl implements ITifoService {
 
     @Override
     public Tifo getTifo(Long id) {
+        log.info("fetch tifo by id : {}",id);
         return tifoRepo.findById(id).get();
     }
 
