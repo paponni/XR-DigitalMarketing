@@ -34,8 +34,9 @@ public class Client extends User{
         this.tickets = tickets;
     }
 
-    public Client(String nom, String prenom, String email, String password, UserRole userRole) {
-        super(nom, prenom, email, password, userRole);
+    public Client(String nom, String prenom, String email, String password,UserRole userRole) {
+        super(nom, prenom
+                ,email, password, userRole);
     }
 
     public Client(List<Tifo> tifos, List<Publicite> publicites, List<Ticket> tickets) {

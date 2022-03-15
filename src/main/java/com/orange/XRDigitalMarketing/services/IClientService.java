@@ -9,7 +9,7 @@ import java.util.List;
 public interface IClientService {
     public ResponseEntity<?> login(Login login);
 
-    ResponseEntity<?> register(Client client) throws Exception;
+    public String register(Client client) throws Exception;
 
     List<Client> getClients();
 

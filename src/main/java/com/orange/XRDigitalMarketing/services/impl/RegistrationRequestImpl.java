@@ -14,6 +14,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
 @Service
+@Transactional
 public class RegistrationRequestImpl implements RegistrationService {
 
     private final IClientService clientService;
@@ -28,13 +29,18 @@ public class RegistrationRequestImpl implements RegistrationService {
 
     @Override
     public String register(RegistrationRequest registrationRequest) throws Exception {
+        System.out.println("first name :"+registrationRequest.getFirstName()+" last name :"+registrationRequest.getLastName());
         String token = String.valueOf(clientService.register(
                 new Client(
-                        registrationRequest.getLastName(),registrationRequest.getFirstName()
-                        ,registrationRequest.getEmail(),registrationRequest.getPassword(), UserRole.USER)
+                        registrationRequest.getLastName(),
+                        registrationRequest.getFirstName(),
+                        registrationRequest.getEmail(),
+                        registrationRequest.getPassword(),
+                        UserRole.USER
+                                )
         ));
         String link = "http://localhost:8080/api/v1/client/registration/confirm?token=" + token;
-        emailSender.send(registrationRequest.getEmail(),buildEmail(
+        emailSender. send(registrationRequest.getEmail(),buildEmail(
                 registrationRequest.getFirstName(),link
         ));
 

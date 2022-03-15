@@ -46,8 +46,9 @@ public class ClientImpl implements IClientService {
     }
 
     @Override
-    public ResponseEntity<?> register(Client client) throws Exception {
+    public String register(Client client) throws Exception {
         log.info("register client id :{}",client.getId());
+        System.out.println(client.getEmail());
         if(clientRepo.findByEmail(client.getEmail()).isPresent()){
             throw new Exception("This email already exists try another one");
         }
@@ -67,7 +68,7 @@ public class ClientImpl implements IClientService {
         ConfirmationToken confirmationToken = new ConfirmationToken
                 (token, LocalDateTime.now(),LocalDateTime.now().plusMinutes(15),client);
         confirmationTokenService.saveConfirmationToken(confirmationToken);
-        return ResponseEntity.status(HttpStatus.OK).body(token) ;
+        return token ;
     }
 
     @Override

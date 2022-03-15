@@ -12,8 +12,16 @@ import javax.persistence.*;
 @Data @NoArgsConstructor @AllArgsConstructor
 @Inheritance(strategy=InheritanceType.JOINED)
 public class User {
+    @SequenceGenerator(
+            name = "user_sequence",
+            sequenceName = "user_sequence",
+            allocationSize = 1
+    )
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "user_sequence"
+    )
     private Long id ;
     private String nom ;
     private String prenom ;
@@ -32,6 +40,11 @@ public class User {
         this.email = email;
         this.password = password;
         this.userRole = userRole;
+    }
+
+
+
+    public User(String nom, String prenom, String tel, String adresse, String email, String password, UserRole userRole) {
     }
 
     public User(Long id, String nom, String prenom, String email, String password, String adresse, String tel, String ville, UserRole userRole) {
