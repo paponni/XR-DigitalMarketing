@@ -3,6 +3,7 @@ package com.orange.XRDigitalMarketing.services.impl;
 import com.orange.XRDigitalMarketing.entities.Admin;
 import com.orange.XRDigitalMarketing.repos.AdminRepo;
 import com.orange.XRDigitalMarketing.services.IAdminService;
+import com.orange.XRDigitalMarketing.utils.Login;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,14 +19,14 @@ public class AdminImpl implements IAdminService {
     }
 
     @Override
-    public ResponseEntity<?> login(Admin admin) {
-        Admin ad = adminRepo.findByEmailAndPassword(admin.getEmail(),admin.getPassword());
+    public ResponseEntity<?> login(Login login) {
+        Admin ad = adminRepo.findByEmailAndPassword(login.getEmail(),login.getPassword());
         if(ad!=null)
             return ResponseEntity.status(HttpStatus.OK)
                     .body(ad);
         else
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("invalid credentials");
+                    .body("invalid admin credentials");
 
     }
 }

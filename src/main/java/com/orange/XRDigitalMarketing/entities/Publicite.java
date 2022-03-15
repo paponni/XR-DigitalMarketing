@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;
@@ -16,11 +17,11 @@ import java.time.LocalTime;
 
 public class Publicite extends Pixel{
     private String nomPub ;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
     private Ticket ticket;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
     private Admin admin;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
     private Client client;
 
     public Publicite(Long id, LocalDate dateAffichage, LocalTime heureAffichge

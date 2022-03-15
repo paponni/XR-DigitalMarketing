@@ -30,7 +30,12 @@ public class Ticket {
     private StatusTicket statusTicket;
     @OneToMany
     private List<Tifo> tifos;
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
+    @JoinColumn(name = "admin_id")
     private Admin admin;
+    @ManyToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
+    @JoinColumn(name = "client_id")
+    private Client client;
+
 }
 

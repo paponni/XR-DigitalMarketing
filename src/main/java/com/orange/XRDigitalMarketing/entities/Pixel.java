@@ -12,7 +12,7 @@ import java.time.LocalTime;
 @Entity
 @Data @AllArgsConstructor @NoArgsConstructor
 @Builder
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy=InheritanceType.JOINED)
 public class Pixel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

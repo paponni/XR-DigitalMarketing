@@ -1,85 +1,67 @@
 package com.orange.XRDigitalMarketing.services.impl;
 
-
 import com.orange.XRDigitalMarketing.entities.Client;
 import com.orange.XRDigitalMarketing.entities.ConfirmationToken;
-import com.orange.XRDigitalMarketing.repos.ClientRepo;
+import com.orange.XRDigitalMarketing.enumeration.UserRole;
 import com.orange.XRDigitalMarketing.services.ConfirmationTokenService;
+import com.orange.XRDigitalMarketing.services.EmailSender;
 import com.orange.XRDigitalMarketing.services.IClientService;
-import com.orange.XRDigitalMarketing.utils.Login;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.orange.XRDigitalMarketing.services.RegistrationService;
+import com.orange.XRDigitalMarketing.utils.RegistrationRequest;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.UUID;
 
 @Service
-@Slf4j
-@Transactional
-public class ClientImpl implements IClientService {
+public class RegistrationRequestImpl implements RegistrationService {
 
-
-    private final ClientRepo clientRepo;
+    private final IClientService clientService;
+    private final EmailSender emailSender;
     private final ConfirmationTokenService confirmationTokenService;
 
-
-    public ClientImpl(ClientRepo clientRepo, ConfirmationTokenService confirmationTokenService) {
-        this.clientRepo = clientRepo;
+    public RegistrationRequestImpl(IClientService clientService, EmailSender emailSender, ConfirmationTokenService confirmationTokenService) {
+        this.clientService = clientService;
+        this.emailSender = emailSender;
         this.confirmationTokenService = confirmationTokenService;
     }
 
-
     @Override
-    public ResponseEntity<?> login(Login login) {
-        log.info("login client by email : {} ",login.getEmail());
-        Client cl = clientRepo.findByEmailAndPassword(login.getEmail(), login.getPassword());
-        if (cl != null)
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(cl);
-        else
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("invalid client credential");
+    public String register(RegistrationRequest registrationRequest) throws Exception {
+        String token = String.valueOf(clientService.register(
+                new Client(
+                        registrationRequest.getLastName(),registrationRequest.getFirstName()
+                        ,registrationRequest.getEmail(),registrationRequest.getPassword(), UserRole.USER)
+        ));
+        String link = "http://localhost:8080/api/v1/client/registration/confirm?token=" + token;
+        emailSender.send(registrationRequest.getEmail(),buildEmail(
+                registrationRequest.getFirstName(),link
+        ));
+
+        return token;
     }
+    @Transactional
+    public String confirmToken(String token) {
+        ConfirmationToken confirmationToken = confirmationTokenService
+                .getToken(token)
+                .orElseThrow(() ->
+                        new IllegalStateException("token not found"));
 
-    @Override
-    public ResponseEntity<?> register(Client client) throws Exception {
-        log.info("register client id :{}",client.getId());
-        if(clientRepo.findByEmail(client.getEmail()).isPresent()){
-            throw new Exception("This email already exists try another one");
+        if (confirmationToken.getConfirmedAt() != null) {
+            throw new IllegalStateException("email already confirmed");
         }
-        if(clientRepo.findByTel(client.getTel()).isPresent()){
-            throw new Exception("This Tel already exists try another one");
+
+        LocalDateTime expiredAt = confirmationToken.getExpiresAt();
+
+        if (expiredAt.isBefore(LocalDateTime.now())) {
+            throw new IllegalStateException("token expired");
         }
-        String password = client.getPassword();
-        System.out.println(password);
-//        if(!password.isEmpty() && password.length() >= 8){
-//            client.setPassword(password);
-//        }
-//        else{
-//            throw new Exception("password does not setted");
-//        }
-        clientRepo.save(client);
-        String token = UUID.randomUUID().toString();
-        ConfirmationToken confirmationToken = new ConfirmationToken
-                (token, LocalDateTime.now(),LocalDateTime.now().plusMinutes(15),client);
-        confirmationTokenService.saveConfirmationToken(confirmationToken);
-        return ResponseEntity.status(HttpStatus.OK).body(token) ;
-    }
 
-    @Override
-    public List<Client> getClients() {
-        return clientRepo.findAll();
+        confirmationTokenService.setConfirmedAt(token);
+        clientService.enableAppUser(
+                confirmationToken.getAppUser().getEmail());
+        return "confirmed";
     }
-
-    @Override
-    public int enableAppUser(String email) {
-        return clientRepo.enableAppUser(email);
-    }
-
 
     private String buildEmail(String name, String link) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
@@ -149,7 +131,4 @@ public class ClientImpl implements IClientService {
                 "\n" +
                 "</div></div>";
     }
-
-
 }
-
