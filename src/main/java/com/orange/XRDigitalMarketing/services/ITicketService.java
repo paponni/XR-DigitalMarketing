@@ -17,4 +17,6 @@ public interface ITicketService {
     ResponseEntity<Ticket> updateTicket(Ticket ticket) throws TicketNotFoundException;
 
     Long removeTicket(Long id) throws TicketNotFoundException;
+
+    Ticket getTicket(Long id);
 }

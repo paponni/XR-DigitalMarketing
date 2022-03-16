@@ -30,7 +30,7 @@ public class EmailImpl implements EmailSender {
             helper.setText(email, true);
             helper.setTo(to);
             helper.setSubject("Confirm your email");
-            helper.setFrom("mohamedmamoun@hotmail.fr");
+            helper.setFrom("projectXr@orange.ma");
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
             log.info("failed to send email", e);

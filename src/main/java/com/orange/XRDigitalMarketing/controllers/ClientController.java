@@ -1,6 +1,8 @@
 package com.orange.XRDigitalMarketing.controllers;
 
 
+import com.orange.XRDigitalMarketing.entities.Client;
+import com.orange.XRDigitalMarketing.entities.Ticket;
 import com.orange.XRDigitalMarketing.services.IClientService;
 import com.orange.XRDigitalMarketing.services.RegistrationService;
 import com.orange.XRDigitalMarketing.utils.Login;
@@ -34,4 +36,10 @@ public class ClientController {
     }
 
 
+
+
+//    @PostMapping("/acheter-ticket")
+//    public Ticket acheterTicket(Long id , Client c){
+//        return clientService.acheterTicket()
+//    }
 }

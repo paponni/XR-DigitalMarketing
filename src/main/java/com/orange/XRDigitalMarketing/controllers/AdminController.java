@@ -39,6 +39,10 @@ public class AdminController {
         return ticketService.loadAllTickets();
 
     }
+    @GetMapping("/tickets/{id}")
+    public Ticket getTicket(@PathVariable Long id){
+        return ticketService.getTicket(id);
+    }
     @GetMapping("/clients")
     List<Client> getClients(){
         return clientService.getClients();

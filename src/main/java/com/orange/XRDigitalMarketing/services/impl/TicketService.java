@@ -71,4 +71,9 @@ public class TicketService implements ITicketService {
 
     }
 
+    @Override
+    public Ticket getTicket(Long id) {
+        return ticketRepo.findById(id).get();
+    }
+
 }
