@@ -3,7 +3,9 @@ package com.orange.XRDigitalMarketing.services.impl;
 
 import com.orange.XRDigitalMarketing.entities.Client;
 import com.orange.XRDigitalMarketing.entities.ConfirmationToken;
+import com.orange.XRDigitalMarketing.entities.Ticket;
 import com.orange.XRDigitalMarketing.repos.ClientRepo;
+import com.orange.XRDigitalMarketing.repos.TicketRepo;
 import com.orange.XRDigitalMarketing.services.ConfirmationTokenService;
 import com.orange.XRDigitalMarketing.services.IClientService;
 import com.orange.XRDigitalMarketing.utils.Login;
@@ -25,11 +27,13 @@ public class ClientImpl implements IClientService {
 
     private final ClientRepo clientRepo;
     private final ConfirmationTokenService confirmationTokenService;
+    private final TicketRepo ticketRepo;
 
 
-    public ClientImpl(ClientRepo clientRepo, ConfirmationTokenService confirmationTokenService) {
+    public ClientImpl(ClientRepo clientRepo, ConfirmationTokenService confirmationTokenService, TicketRepo ticketRepo) {
         this.clientRepo = clientRepo;
         this.confirmationTokenService = confirmationTokenService;
+        this.ticketRepo = ticketRepo;
     }
 
 
@@ -79,6 +83,27 @@ public class ClientImpl implements IClientService {
     @Override
     public int enableAppUser(String email) {
         return clientRepo.enableAppUser(email);
+    }
+
+    @Override
+    public Ticket acheterTicket(Long id,int nbrTicketAchete, Ticket ticket) throws Exception {
+        log.info("l achat du ticket by client with id {}",id);
+        Client client = clientRepo.findById(id).orElse(null);
+        if(client == null)
+            throw new Exception("client not found with id :"+id);
+
+        List<Ticket> tickets= client.getTickets();
+        if(ticket.getNombreTicket() - nbrTicketAchete <= 0)
+            throw new Exception("Tickets arent dispo");
+
+        int nbrTicketreste = ticket.getNombreTicket() - nbrTicketAchete;
+        ticket.setNombreTicket(nbrTicketreste);
+        ticketRepo.save(ticket);
+        tickets.add(ticket);
+        client.setTickets(tickets);
+        clientRepo.save(client);
+
+        return ticketRepo.save(ticket);
     }
 
 
@@ -150,6 +175,8 @@ public class ClientImpl implements IClientService {
                 "\n" +
                 "</div></div>";
     }
+
+
 
 
 }

@@ -13,6 +13,7 @@ import java.util.List;
 
 @Entity
 @Data @NoArgsConstructor
+@Builder
 public class Client extends User{
 
     @OneToMany(mappedBy = "client")
