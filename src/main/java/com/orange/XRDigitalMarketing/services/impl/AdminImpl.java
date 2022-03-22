@@ -4,11 +4,13 @@ import com.orange.XRDigitalMarketing.entities.Admin;
 import com.orange.XRDigitalMarketing.repos.AdminRepo;
 import com.orange.XRDigitalMarketing.services.IAdminService;
 import com.orange.XRDigitalMarketing.utils.Login;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class AdminImpl implements IAdminService {
 
 
@@ -25,6 +27,7 @@ public class AdminImpl implements IAdminService {
             return ResponseEntity.status(HttpStatus.OK)
                     .body(ad);
         else
+            log.error("admin with email {} not valid",login.getEmail());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body("invalid admin credentials");
 

@@ -61,12 +61,12 @@ public class ClientImpl implements IClientService {
         }
         String password = client.getPassword();
         System.out.println(password);
-//        if(!password.isEmpty() && password.length() >= 8){
-//            client.setPassword(password);
-//        }
-//        else{
-//            throw new Exception("password does not setted");
-//        }
+        if(!password.isEmpty() && password.length() >= 8){
+            client.setPassword(password);
+        }
+        else{
+            throw new Exception("password does not setted");
+        }
         clientRepo.save(client);
         String token = UUID.randomUUID().toString();
         ConfirmationToken confirmationToken = new ConfirmationToken

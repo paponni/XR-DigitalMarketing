@@ -12,7 +12,7 @@ public interface ITicketService {
 
     ResponseEntity<Ticket> loadTicket(Long id);
 
-    ResponseEntity<Ticket> createTicket(Ticket ticket) throws TicketDuplicatedException;
+    ResponseEntity<?> createTicket(Ticket ticket) throws TicketDuplicatedException;
 
     ResponseEntity<Ticket> updateTicket(Ticket ticket) throws TicketNotFoundException;
 

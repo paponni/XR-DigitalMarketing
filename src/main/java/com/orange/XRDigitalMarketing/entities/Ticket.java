@@ -1,5 +1,6 @@
 package com.orange.XRDigitalMarketing.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.orange.XRDigitalMarketing.enumeration.StatusTicket;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,12 +30,15 @@ public class Ticket {
     private int nombreTicket;
     private StatusTicket statusTicket;
     @OneToMany
+    @JsonIgnore
     private List<Tifo> tifos;
     @ManyToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
+    @JsonIgnore
     @JoinColumn(name = "admin_id")
     private Admin admin;
     @ManyToOne(cascade = {CascadeType.REMOVE,CascadeType.PERSIST})
     @JoinColumn(name = "client_id")
+    @JsonIgnore
     private Client client;
 
 }

@@ -1,7 +1,6 @@
 package com.orange.XRDigitalMarketing.controllers;
 
 
-import com.orange.XRDigitalMarketing.entities.Client;
 import com.orange.XRDigitalMarketing.entities.Ticket;
 import com.orange.XRDigitalMarketing.services.IClientService;
 import com.orange.XRDigitalMarketing.services.RegistrationService;
@@ -12,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/api/v1/client")
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class ClientController {
     private final IClientService clientService;
     private final RegistrationService registrationService;
@@ -35,11 +35,8 @@ public class ClientController {
         return registrationService.confirmToken(token);
     }
 
-
-
-
-//    @PostMapping("/acheter-ticket")
-//    public Ticket acheterTicket(Long id , Client c){
-//        return clientService.acheterTicket()
-//    }
+    @PostMapping("/acheter-ticket")
+    public Ticket acheterTicket(Long id , int nbrTicket,Ticket ticket) throws Exception {
+        return clientService.acheterTicket(id,nbrTicket,ticket);
+    }
 }

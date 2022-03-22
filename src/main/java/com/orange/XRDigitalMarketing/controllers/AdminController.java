@@ -16,6 +16,7 @@ import java.util.List;
 
 @RequestMapping("/api/v1/admin")
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class AdminController {
 
 
@@ -53,7 +54,7 @@ public class AdminController {
         return ticketService.loadTicket(id);
     }
     @PostMapping("/")
-    ResponseEntity<Ticket> createTicket(@RequestBody Ticket ticket) throws TicketDuplicatedException {
+    ResponseEntity<?> createTicket(@RequestBody Ticket ticket) throws TicketDuplicatedException {
         return ticketService.createTicket(ticket);
     }
 
