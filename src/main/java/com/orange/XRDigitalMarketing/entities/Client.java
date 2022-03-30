@@ -2,7 +2,6 @@ package com.orange.XRDigitalMarketing.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.orange.XRDigitalMarketing.enumeration.UserRole;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +12,6 @@ import java.util.List;
 
 @Entity
 @Data @NoArgsConstructor
-@Builder
 public class Client extends User{
 
     @OneToMany(mappedBy = "client")
@@ -40,9 +38,5 @@ public class Client extends User{
                 ,email, password, userRole);
     }
 
-    public Client(List<Tifo> tifos, List<Publicite> publicites, List<Ticket> tickets) {
-        this.tifos = tifos;
-        this.publicites = publicites;
-        this.tickets = tickets;
-    }
+
 }

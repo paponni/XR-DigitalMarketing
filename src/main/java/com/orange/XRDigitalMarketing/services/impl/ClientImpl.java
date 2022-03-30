@@ -12,6 +12,7 @@ import com.orange.XRDigitalMarketing.utils.Login;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -28,12 +29,14 @@ public class ClientImpl implements IClientService {
     private final ClientRepo clientRepo;
     private final ConfirmationTokenService confirmationTokenService;
     private final TicketRepo ticketRepo;
+    private final PasswordEncoder passwordEncoder;
 
 
-    public ClientImpl(ClientRepo clientRepo, ConfirmationTokenService confirmationTokenService, TicketRepo ticketRepo) {
+    public ClientImpl(ClientRepo clientRepo, ConfirmationTokenService confirmationTokenService, TicketRepo ticketRepo, PasswordEncoder passwordEncoder) {
         this.clientRepo = clientRepo;
         this.confirmationTokenService = confirmationTokenService;
         this.ticketRepo = ticketRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -62,7 +65,7 @@ public class ClientImpl implements IClientService {
         String password = client.getPassword();
         System.out.println(password);
         if(!password.isEmpty() && password.length() >= 8){
-            client.setPassword(password);
+            client.setPassword(passwordEncoder.encode(password));
         }
         else{
             throw new Exception("password does not setted");

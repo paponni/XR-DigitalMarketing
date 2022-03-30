@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,6 +32,7 @@ public class XrDigitalMarketingApplication implements CommandLineRunner {
 	private ClientRepo clientRepo;
 	@Autowired
 	private TicketRepo ticketRepo;
+
 	public static void main(String[] args) {
 		SpringApplication.run(XrDigitalMarketingApplication.class, args);
 	}
@@ -46,6 +50,8 @@ public class XrDigitalMarketingApplication implements CommandLineRunner {
 
 //		Client client= new Client(null,"Mamoun","Mohamed","mohamed@example.com","123456","marrakech","0661626364","Marrakech", UserRole.USER,null,null,null);
 //		clientRepo.save(client);
+		Client cl = new Client("spooky","boi","test@example.com",passwordEncoder().encode("123456"),UserRole.USER);
+		clientRepo.save(cl);
 		Ticket ticket = new Ticket(null,"Atletico madrid vs Valencia CF", LocalDate.now(), LocalTime.now(),"Estadio el madrigal ,villarreal ,Spain ",new BigDecimal("100"),"test.png",200, StatusTicket.en_cours,null,null,null);
 		Ticket ticket1 = new Ticket(null,"Atletico madrid vs Valencia CF", LocalDate.now(), LocalTime.now(),"Estadio el madrigal ,villarreal ,Spain 	",new BigDecimal("200"),"test.png",200, StatusTicket.en_cours,null,null,null);
 
@@ -53,5 +59,10 @@ public class XrDigitalMarketingApplication implements CommandLineRunner {
 		ticketRepo.save(ticket1);
 	}
 
+
+	@Bean
+	PasswordEncoder passwordEncoder(){
+		return new BCryptPasswordEncoder();
+	}
 
 }

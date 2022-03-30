@@ -81,4 +81,26 @@ public class TicketServiceTest {
 
     }
 
+    @Test
+    public void shouldRemoveTicketWithSuccess() throws TicketDuplicatedException {
+        Ticket expectedTicket = Ticket.builder()
+                .id(3L)
+                .nomMatch("FC BARCELONE VS REAL MADRID")
+                .dateMatch(LocalDate.parse("2022-03-22"))
+                .heureMatch(LocalTime.parse("18:37:06.743456"))
+                .lieuMatch("BERNABIO")
+                .nombreTicket(3000)
+                .photo("test.png")
+                .prix(new BigDecimal(5000))
+                .statusTicket(StatusTicket.en_cours)
+                .build();
+        ResponseEntity<Ticket> savedTicket = ticketService.createTicket(expectedTicket);
+
+
+
+
+
+    }
+
+
 }

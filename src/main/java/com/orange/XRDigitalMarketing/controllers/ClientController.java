@@ -39,4 +39,7 @@ public class ClientController {
     public Ticket acheterTicket(Long id , int nbrTicket,Ticket ticket) throws Exception {
         return clientService.acheterTicket(id,nbrTicket,ticket);
     }
+
+
+
 }
