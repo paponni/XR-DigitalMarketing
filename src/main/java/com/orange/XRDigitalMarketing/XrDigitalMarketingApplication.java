@@ -1,13 +1,11 @@
 package com.orange.XRDigitalMarketing;
 
+import com.orange.XRDigitalMarketing.entities.Admin;
 import com.orange.XRDigitalMarketing.entities.Client;
 import com.orange.XRDigitalMarketing.entities.Ticket;
 import com.orange.XRDigitalMarketing.enumeration.StatusTicket;
 import com.orange.XRDigitalMarketing.enumeration.UserRole;
-import com.orange.XRDigitalMarketing.repos.PubliciteRepo;
-import com.orange.XRDigitalMarketing.repos.TicketRepo;
-import com.orange.XRDigitalMarketing.repos.TifoRepo;
-import com.orange.XRDigitalMarketing.repos.ClientRepo;
+import com.orange.XRDigitalMarketing.repos.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -32,6 +30,8 @@ public class XrDigitalMarketingApplication implements CommandLineRunner {
 	private ClientRepo clientRepo;
 	@Autowired
 	private TicketRepo ticketRepo;
+	@Autowired
+	private AdminRepo adminRepo;
 
 	public static void main(String[] args) {
 		SpringApplication.run(XrDigitalMarketingApplication.class, args);
@@ -50,8 +50,10 @@ public class XrDigitalMarketingApplication implements CommandLineRunner {
 
 //		Client client= new Client(null,"Mamoun","Mohamed","mohamed@example.com","123456","marrakech","0661626364","Marrakech", UserRole.USER,null,null,null);
 //		clientRepo.save(client);
-		Client cl = new Client("spooky","boi","test@example.com",passwordEncoder().encode("123456"),UserRole.USER);
+		Client cl = new Client("spooky","boi","spooky@example.com",passwordEncoder().encode("1234"),UserRole.USER);
+		Admin admin = new Admin(null,"admin","admin","admin@example.com",passwordEncoder().encode("1234"),null,null,null,true,UserRole.ADMIN);
 		clientRepo.save(cl);
+		adminRepo.save(admin);
 		Ticket ticket = new Ticket(null,"Atletico madrid vs Valencia CF", LocalDate.now(), LocalTime.now(),"Estadio el madrigal ,villarreal ,Spain ",new BigDecimal("100"),"test.png",200, StatusTicket.en_cours,null,null,null);
 		Ticket ticket1 = new Ticket(null,"Atletico madrid vs Valencia CF", LocalDate.now(), LocalTime.now(),"Estadio el madrigal ,villarreal ,Spain 	",new BigDecimal("200"),"test.png",200, StatusTicket.en_cours,null,null,null);
 

@@ -36,7 +36,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RequestMapping("/api/v1/admin")
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200/")
 public class AdminController {
 
 
@@ -104,7 +104,7 @@ public class AdminController {
         if(authorizationHeader != null & authorizationHeader.startsWith("Bearer ")) {
         try {
             String refresh_token = authorizationHeader.substring ("Bearer ".length());
-            Algorithm algorithm = Algorithm. HMAC256 ("secret".getBytes ());
+            Algorithm algorithm = Algorithm. HMAC256 ("secret".getBytes());
             JWTVerifier verifier = JWT.require(algorithm).build();
             DecodedJWT decodedJWT = verifier.verify(refresh_token);
             String email = decodedJWT.getSubject();
@@ -113,7 +113,7 @@ public class AdminController {
                     .withSubject(user.getEmail())
                     .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
                     .withIssuer(request.getRequestURI().toString())
-                    .withClaim("roles", Collections.singletonList(user.getUserRole()))
+                    .withClaim("roles", String.valueOf(user.getUserRole()))
                     .sign(algorithm);
             Map<String, String> tokens = new HashMap<>();
             tokens.put("access_token", access_token);
