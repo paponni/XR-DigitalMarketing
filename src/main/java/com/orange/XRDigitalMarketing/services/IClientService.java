@@ -2,6 +2,7 @@ package com.orange.XRDigitalMarketing.services;
 
 import com.orange.XRDigitalMarketing.entities.Client;
 import com.orange.XRDigitalMarketing.entities.Ticket;
+import com.orange.XRDigitalMarketing.exceptions.ClientNotFoundException;
 import com.orange.XRDigitalMarketing.utils.Login;
 import org.springframework.http.ResponseEntity;
 
@@ -16,4 +17,6 @@ public interface IClientService {
 
     int enableAppUser(String email);
     Ticket acheterTicket(Long id,int nbrTicketAchete,Ticket ticket) throws Exception;
+
+    Client getClient(String email) throws ClientNotFoundException;
 }

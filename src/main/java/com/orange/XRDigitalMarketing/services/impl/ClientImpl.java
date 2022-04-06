@@ -4,6 +4,7 @@ package com.orange.XRDigitalMarketing.services.impl;
 import com.orange.XRDigitalMarketing.entities.Client;
 import com.orange.XRDigitalMarketing.entities.ConfirmationToken;
 import com.orange.XRDigitalMarketing.entities.Ticket;
+import com.orange.XRDigitalMarketing.exceptions.ClientNotFoundException;
 import com.orange.XRDigitalMarketing.repos.ClientRepo;
 import com.orange.XRDigitalMarketing.repos.TicketRepo;
 import com.orange.XRDigitalMarketing.services.ConfirmationTokenService;
@@ -59,9 +60,9 @@ public class ClientImpl implements IClientService {
         if(clientRepo.findByEmail(client.getEmail()).isPresent()){
             throw new Exception("This email already exists try another one");
         }
-        if(clientRepo.findByTel(client.getTel()).isPresent()){
-            throw new Exception("This Tel already exists try another one");
-        }
+//        if(clientRepo.findByTel(client.getTel()).isPresent()){
+//            throw new Exception("This Tel already exists try another one");
+//        }
         String password = client.getPassword();
         System.out.println(password);
         if(!password.isEmpty() && password.length() >= 8){
@@ -107,6 +108,15 @@ public class ClientImpl implements IClientService {
         clientRepo.save(client);
 
         return ticketRepo.save(ticket);
+    }
+
+    @Override
+    public Client getClient(String email) throws ClientNotFoundException {
+        Client clientFromDB = clientRepo.findByEmail(email).orElse(null);
+        if(clientFromDB == null)
+            throw new ClientNotFoundException("the provided email is not correct ");
+
+        return clientFromDB;
     }
 
 

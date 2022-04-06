@@ -1,7 +1,9 @@
 package com.orange.XRDigitalMarketing.controllers;
 
 
+import com.orange.XRDigitalMarketing.entities.Client;
 import com.orange.XRDigitalMarketing.entities.Ticket;
+import com.orange.XRDigitalMarketing.exceptions.ClientNotFoundException;
 import com.orange.XRDigitalMarketing.services.IClientService;
 import com.orange.XRDigitalMarketing.services.RegistrationService;
 import com.orange.XRDigitalMarketing.utils.Login;
@@ -33,6 +35,11 @@ public class ClientController {
     @GetMapping(path = "/registration/confirm")
     public String confirm(@RequestParam("token") String token) {
         return registrationService.confirmToken(token);
+    }
+
+    @GetMapping(path = "/{email}")
+    public Client getClient(@PathVariable String email) throws ClientNotFoundException {
+        return clientService.getClient(email);
     }
 
     @PostMapping("/acheter-ticket")
