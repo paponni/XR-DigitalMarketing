@@ -3,13 +3,20 @@ package com.orange.XRDigitalMarketing.controllers;
 
 import com.orange.XRDigitalMarketing.entities.Client;
 import com.orange.XRDigitalMarketing.entities.Ticket;
+import com.orange.XRDigitalMarketing.exceptions.CartCustomException;
 import com.orange.XRDigitalMarketing.exceptions.ClientNotFoundException;
+import com.orange.XRDigitalMarketing.exceptions.PlaceOrderCustomException;
+import com.orange.XRDigitalMarketing.response.CartResponse;
+import com.orange.XRDigitalMarketing.response.ServerResponse;
 import com.orange.XRDigitalMarketing.services.IClientService;
 import com.orange.XRDigitalMarketing.services.RegistrationService;
 import com.orange.XRDigitalMarketing.utils.Login;
 import com.orange.XRDigitalMarketing.utils.RegistrationRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 
 @RequestMapping("/api/v1/client")
 @RestController
@@ -47,6 +54,32 @@ public class ClientController {
         return clientService.acheterTicket(id,nbrTicket,ticket);
     }
 
+
+    @GetMapping("/addToCart")
+    public ResponseEntity<ServerResponse> addToCart(@RequestParam(name = "id") Long ticketID , Authentication authentication) throws ClientNotFoundException, CartCustomException {
+
+        return clientService.addToCart(ticketID,authentication);
+    }
+
+    @GetMapping("/viewCart")
+    public ResponseEntity<CartResponse> viewCart(Authentication authentication) throws CartCustomException {
+        return clientService.viewCart(authentication);
+    }
+
+    @PutMapping("/updateCart")
+    public ResponseEntity<CartResponse> updateCart(@RequestBody HashMap<String,String> cart , Authentication auth) throws CartCustomException {
+        return clientService.updateCart(cart, auth);
+    }
+    @DeleteMapping("/delCart")
+    public ResponseEntity<CartResponse> delCart(@RequestParam Long bufcartID,Authentication auth) throws CartCustomException {
+        return clientService.delCart(bufcartID,auth);
+    }
+
+    @GetMapping("/placeOrder")
+    public ResponseEntity<ServerResponse> placeOrder(Authentication auth) throws PlaceOrderCustomException, ClientNotFoundException {
+
+        return clientService.placeOrder(auth);
+    }
 
 
 }

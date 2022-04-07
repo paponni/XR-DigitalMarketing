@@ -12,7 +12,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -36,7 +35,7 @@ public class TicketServiceTest {
                 .lieuMatch("BERNABIO")
                 .nombreTicket(3000)
                 .photo("test.png")
-                .prix(new BigDecimal(5000))
+                .prix(5000)
                 .statusTicket(StatusTicket.en_cours)
                 .build();
         ResponseEntity<Ticket> savedTicket = ticketService.createTicket(expectedTicket);
@@ -58,7 +57,7 @@ public class TicketServiceTest {
                 .lieuMatch("BERNABIO")
                 .nombreTicket(3000)
                 .photo("test.png")
-                .prix(new BigDecimal(5000))
+                .prix(5000)
                 .statusTicket(StatusTicket.en_cours)
                 .build();
 
@@ -91,7 +90,7 @@ public class TicketServiceTest {
                 .lieuMatch("BERNABIO")
                 .nombreTicket(3000)
                 .photo("test.png")
-                .prix(new BigDecimal(5000))
+                .prix(5000)
                 .statusTicket(StatusTicket.en_cours)
                 .build();
         ResponseEntity<Ticket> savedTicket = ticketService.createTicket(expectedTicket);

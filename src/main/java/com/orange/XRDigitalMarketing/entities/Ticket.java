@@ -25,7 +25,7 @@ public class Ticket {
     private LocalDate dateMatch ;
     private LocalTime heureMatch ;
     private String lieuMatch ;
-    private BigDecimal prix ;
+    private double prix ;
     private String photo ;
     private int nombreTicket;
     private StatusTicket statusTicket;

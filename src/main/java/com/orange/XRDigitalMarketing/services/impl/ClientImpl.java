@@ -1,23 +1,31 @@
 package com.orange.XRDigitalMarketing.services.impl;
 
 
-import com.orange.XRDigitalMarketing.entities.Client;
-import com.orange.XRDigitalMarketing.entities.ConfirmationToken;
-import com.orange.XRDigitalMarketing.entities.Ticket;
+import com.orange.XRDigitalMarketing.constants.ResponseCode;
+import com.orange.XRDigitalMarketing.entities.*;
+import com.orange.XRDigitalMarketing.exceptions.CartCustomException;
 import com.orange.XRDigitalMarketing.exceptions.ClientNotFoundException;
+import com.orange.XRDigitalMarketing.exceptions.PlaceOrderCustomException;
+import com.orange.XRDigitalMarketing.repos.CartRepo;
 import com.orange.XRDigitalMarketing.repos.ClientRepo;
+import com.orange.XRDigitalMarketing.repos.OrderRepo;
 import com.orange.XRDigitalMarketing.repos.TicketRepo;
+import com.orange.XRDigitalMarketing.response.CartResponse;
+import com.orange.XRDigitalMarketing.response.ServerResponse;
 import com.orange.XRDigitalMarketing.services.ConfirmationTokenService;
 import com.orange.XRDigitalMarketing.services.IClientService;
 import com.orange.XRDigitalMarketing.utils.Login;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,13 +39,18 @@ public class ClientImpl implements IClientService {
     private final ConfirmationTokenService confirmationTokenService;
     private final TicketRepo ticketRepo;
     private final PasswordEncoder passwordEncoder;
+    private final CartRepo cartRepo;
+    private final OrderRepo orderRepo;
 
 
-    public ClientImpl(ClientRepo clientRepo, ConfirmationTokenService confirmationTokenService, TicketRepo ticketRepo, PasswordEncoder passwordEncoder) {
+
+    public ClientImpl(ClientRepo clientRepo, ConfirmationTokenService confirmationTokenService, TicketRepo ticketRepo, PasswordEncoder passwordEncoder, CartRepo cartRepo, OrderRepo orderRepo) {
         this.clientRepo = clientRepo;
         this.confirmationTokenService = confirmationTokenService;
         this.ticketRepo = ticketRepo;
         this.passwordEncoder = passwordEncoder;
+        this.cartRepo = cartRepo;
+        this.orderRepo = orderRepo;
     }
 
 
@@ -117,6 +130,129 @@ public class ClientImpl implements IClientService {
             throw new ClientNotFoundException("the provided email is not correct ");
 
         return clientFromDB;
+    }
+
+    @Override
+    public ResponseEntity<ServerResponse> addToCart(Long ticketID, Authentication authentication) throws ClientNotFoundException, CartCustomException {
+        ServerResponse resp = new ServerResponse();
+        try {
+            log.info("adding ticket to cart : {}",ticketID);
+            Client loggedClient = clientRepo.findByEmail(authentication.getName()).orElse(null);
+            if(loggedClient == null)
+                throw new ClientNotFoundException("no user are logged");
+            Ticket cartItem = ticketRepo.findById((long) ticketID).orElse(null);
+            Bufcart bufcart = new Bufcart();
+            bufcart.setEmail(loggedClient.getEmail());
+            bufcart.setTicketID(ticketID);
+            bufcart.setQuantite(1);
+            bufcart.setTicketName(cartItem.getNomMatch());
+            bufcart.setPrice(cartItem.getPrix());
+            bufcart.setDateAdded(new Date());
+            cartRepo.save(bufcart);
+
+            resp.setStatus(ResponseCode.SUCCESS_CODE);
+            resp.setMessage(ResponseCode.CART_UPD_MESSAGE_CODE);}
+        catch (Exception e){
+            throw new CartCustomException("Unable to add ticket to cart , please try again");
+        }
+
+
+        return new ResponseEntity<ServerResponse>(resp,HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<CartResponse> viewCart(Authentication authentication) throws CartCustomException {
+        log.info("inside view cart request method");
+        CartResponse response = new CartResponse();
+        try {
+            Client loggedClient = clientRepo.findByEmail(authentication.getName())
+                    .orElseThrow(()-> new ClientNotFoundException(authentication.getName()));
+            response.setStatus(ResponseCode.SUCCESS_CODE);
+            response.setMessage(ResponseCode.VW_CART_MESSAGE);
+            response.setBufcartList(cartRepo.findByEmail(loggedClient.getEmail()));
+
+
+        }
+        catch (Exception e){
+            throw new CartCustomException("Unable to retrieve cart items, please try again");
+        } catch (ClientNotFoundException e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<CartResponse>(response,HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<CartResponse> updateCart(HashMap<String, String> cart, Authentication auth) throws CartCustomException {
+        CartResponse response = new CartResponse();
+        try {
+            Client loggedClient = clientRepo.findByEmail(auth.getName())
+                    .orElseThrow(()->  new ClientNotFoundException("client not found"));
+            Bufcart selcart = cartRepo.findByBufcartIDAndEmail(Long.valueOf(cart.get("id")),loggedClient.getEmail());
+            selcart.setQuantite(Integer.parseInt(cart.get("quantite")));
+            cartRepo.save(selcart);
+            List<Bufcart> bufcartList = cartRepo.findByEmail(loggedClient.getEmail());
+            response.setStatus(ResponseCode.SUCCESS_CODE);
+            response.setMessage(ResponseCode.UPD_CART_MESSAGE);
+            response.setBufcartList(bufcartList);
+        }
+        catch (Exception | ClientNotFoundException e){
+                throw new CartCustomException("unable to update cart item, please try again");
+        }
+
+        return new ResponseEntity<CartResponse>(response,HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<CartResponse> delCart(Long bufcartID, Authentication auth) throws CartCustomException {
+
+        CartResponse response = new CartResponse();
+        try{
+            Client loggedClient = clientRepo.findByEmail(auth.getName())
+                    .orElseThrow(()-> new ClientNotFoundException("user not found"));
+            cartRepo.deleteByBufcartIDAndEmail(bufcartID,loggedClient.getEmail());
+            List<Bufcart> bufcartList = cartRepo.findByEmail(loggedClient.getEmail());
+            response.setStatus(ResponseCode.SUCCESS_CODE);
+            response.setMessage(ResponseCode.DEL_CART_SUCCESS_MESSAGE);
+            response.setBufcartList(bufcartList);
+        }
+        catch (Exception e){
+            throw new CartCustomException("Unable to delete cart items , please try again");
+
+        } catch (ClientNotFoundException e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<CartResponse>(response,HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<ServerResponse> placeOrder(Authentication auth) throws ClientNotFoundException, PlaceOrderCustomException {
+        ServerResponse response = new ServerResponse();
+        try{
+            Client loggedClient = clientRepo.findByEmail(auth.getName())
+                    .orElseThrow(()-> new ClientNotFoundException("user not found"));
+            PlaceOrder placeOrder = new PlaceOrder();
+            placeOrder.setEmail(loggedClient.getEmail());
+            placeOrder.setOrderDate(new Date());
+            placeOrder.setOrderStatus(ResponseCode.ORD_STATUS_CODE);
+            double total = 0 ;
+            List<Bufcart> bufcartList = cartRepo.findAllByEmail(loggedClient.getEmail());
+            for(Bufcart buf:bufcartList){
+                total = +(buf.getQuantite() * buf.getPrice());
+            }
+            placeOrder.setCostTotal(total);
+            PlaceOrder po =  orderRepo.save(placeOrder);
+            bufcartList.forEach(bufcart -> {
+                bufcart.setBufcartID(po.getOrderID());
+                cartRepo.save(bufcart);
+            });
+            response.setStatus(ResponseCode.SUCCESS_CODE);
+            response.setMessage(ResponseCode.ORD_SUCCESS_MESSAGE);
+
+        }
+        catch (Exception e){
+                throw new PlaceOrderCustomException("Unable to place order , please try again");
+        }
+        return new ResponseEntity<ServerResponse>(response,HttpStatus.OK);
     }
 
 

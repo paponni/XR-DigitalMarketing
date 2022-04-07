@@ -54,8 +54,8 @@ public class XrDigitalMarketingApplication implements CommandLineRunner {
 		Admin admin = new Admin(null,"admin","admin","admin@example.com",passwordEncoder().encode("1234"),null,null,null,true,UserRole.ADMIN);
 		clientRepo.save(cl);
 		adminRepo.save(admin);
-		Ticket ticket = new Ticket(null,"Atletico madrid vs Valencia CF", LocalDate.now(), LocalTime.now(),"Estadio el madrigal ,villarreal ,Spain ",new BigDecimal("100"),"test.png",200, StatusTicket.en_cours,null,null,null);
-		Ticket ticket1 = new Ticket(null,"Atletico madrid vs Valencia CF", LocalDate.now(), LocalTime.now(),"Estadio el madrigal ,villarreal ,Spain 	",new BigDecimal("200"),"test.png",200, StatusTicket.en_cours,null,null,null);
+		Ticket ticket = new Ticket(null,"Atletico madrid vs Valencia CF", LocalDate.now(), LocalTime.now(),"Estadio el madrigal ,villarreal ,Spain ",100,"test.png",200, StatusTicket.en_cours,null,null,null);
+		Ticket ticket1 = new Ticket(null,"Atletico madrid vs Valencia CF", LocalDate.now(), LocalTime.now(),"Estadio el madrigal ,villarreal ,Spain 	",200,"test.png",200, StatusTicket.en_cours,null,null,null);
 
 		ticketRepo.save(ticket);
 		ticketRepo.save(ticket1);
