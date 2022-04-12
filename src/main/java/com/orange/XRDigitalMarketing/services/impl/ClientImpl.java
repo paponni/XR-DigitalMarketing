@@ -188,6 +188,7 @@ public class ClientImpl implements IClientService {
             Client loggedClient = clientRepo.findByEmail(auth.getName())
                     .orElseThrow(()->  new ClientNotFoundException("client not found"));
             Bufcart selcart = cartRepo.findByBufcartIDAndEmail(Long.valueOf(cart.get("id")),loggedClient.getEmail());
+            log.info("inside update cart method ");
             selcart.setQuantite(Integer.parseInt(cart.get("quantite")));
             cartRepo.save(selcart);
             List<Bufcart> bufcartList = cartRepo.findByEmail(loggedClient.getEmail());
