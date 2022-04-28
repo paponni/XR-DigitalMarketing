@@ -3,6 +3,7 @@ package com.orange.XRDigitalMarketing.services.impl;
 
 import com.orange.XRDigitalMarketing.constants.ResponseCode;
 import com.orange.XRDigitalMarketing.entities.*;
+import com.orange.XRDigitalMarketing.enumeration.ZoneTicket;
 import com.orange.XRDigitalMarketing.exceptions.CartCustomException;
 import com.orange.XRDigitalMarketing.exceptions.ClientNotFoundException;
 import com.orange.XRDigitalMarketing.exceptions.PlaceOrderCustomException;
@@ -28,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -135,20 +137,34 @@ public class ClientImpl implements IClientService {
     @Override
     public ResponseEntity<ServerResponse> addToCart(Long ticketID, Authentication authentication) throws ClientNotFoundException, CartCustomException {
         ServerResponse resp = new ServerResponse();
+        boolean isThere = false;
         try {
             log.info("adding ticket to cart : {}",ticketID);
             Client loggedClient = clientRepo.findByEmail(authentication.getName()).orElse(null);
             if(loggedClient == null)
                 throw new ClientNotFoundException("no user are logged");
             Ticket cartItem = ticketRepo.findById((long) ticketID).orElse(null);
-            Bufcart bufcart = new Bufcart();
-            bufcart.setEmail(loggedClient.getEmail());
-            bufcart.setTicketID(ticketID);
-            bufcart.setQuantite(1);
-            bufcart.setTicketName(cartItem.getNomMatch());
-            bufcart.setPrice(cartItem.getPrix());
-            bufcart.setDateAdded(new Date());
-            cartRepo.save(bufcart);
+            List<Bufcart> bufcartList = cartRepo.findAll();
+            for(Bufcart bufcart : bufcartList){
+                if(bufcart.getTicketID() == ticketID){
+                    bufcart.setQuantite(bufcart.getQuantite() + 1);
+                    cartRepo.save(bufcart);
+                    isThere = true;
+                }
+            }
+            if(!isThere){
+                System.out.println(cartItem);
+                Bufcart bufcart = new Bufcart();
+                bufcart.setEmail(loggedClient.getEmail());
+                bufcart.setTicketID(ticketID);
+                bufcart.setZoneTicket(ZoneTicket.zone_1.getValue());
+                bufcart.setQuantite(1);
+                bufcart.setTicketName(cartItem.getNomMatch());
+                bufcart.setPrice(cartItem.getPrix());
+                bufcart.setDateAdded(new Date());
+                cartRepo.save(bufcart);
+            }
+
 
             resp.setStatus(ResponseCode.SUCCESS_CODE);
             resp.setMessage(ResponseCode.CART_UPD_MESSAGE_CODE);}
@@ -190,6 +206,11 @@ public class ClientImpl implements IClientService {
             Bufcart selcart = cartRepo.findByBufcartIDAndEmail(Long.valueOf(cart.get("id")),loggedClient.getEmail());
             log.info("inside update cart method ");
             selcart.setQuantite(Integer.parseInt(cart.get("quantite")));
+//           n
+//            if(Integer.parseInt(cart.get("zoneTicket")) == ZoneTicket.zone_3.getValue()){
+//                selcart.setPrice(selcart.getPrice() * 3);
+//            }
+//            selcart.setZoneTicket(Integer.parseInt(cart.get("zoneTicket")));
             cartRepo.save(selcart);
             List<Bufcart> bufcartList = cartRepo.findByEmail(loggedClient.getEmail());
             response.setStatus(ResponseCode.SUCCESS_CODE);

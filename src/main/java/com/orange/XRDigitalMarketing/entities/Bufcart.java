@@ -1,12 +1,10 @@
 package com.orange.XRDigitalMarketing.entities;
 
 
+import com.orange.XRDigitalMarketing.enumeration.ZoneTicket;
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -22,6 +20,7 @@ public class Bufcart  implements Serializable {
     private Date dateAdded ;
     private Long ticketID;
     private String ticketName ;
+    private int zoneTicket;
     private double price;
     private int quantite;
 

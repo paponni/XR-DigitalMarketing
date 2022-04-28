@@ -92,6 +92,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
+		<finalName>spring-boot-docker.jar</finalName>
 	</build>
 
 </project>

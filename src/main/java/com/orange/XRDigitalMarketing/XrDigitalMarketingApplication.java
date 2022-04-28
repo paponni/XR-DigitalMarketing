@@ -5,6 +5,7 @@ import com.orange.XRDigitalMarketing.entities.Client;
 import com.orange.XRDigitalMarketing.entities.Ticket;
 import com.orange.XRDigitalMarketing.enumeration.StatusTicket;
 import com.orange.XRDigitalMarketing.enumeration.UserRole;
+import com.orange.XRDigitalMarketing.enumeration.ZoneTicket;
 import com.orange.XRDigitalMarketing.repos.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +51,13 @@ public class XrDigitalMarketingApplication implements CommandLineRunner {
 
 //		Client client= new Client(null,"Mamoun","Mohamed","mohamed@example.com","123456","marrakech","0661626364","Marrakech", UserRole.USER,null,null,null);
 //		clientRepo.save(client);
-		Client cl = new Client("spooky","boi","spooky@example.com",passwordEncoder().encode("1234"),UserRole.USER);
+		Client cl = new Client("Arbi","Cheb","spooky@example.com",passwordEncoder().encode("1234"),UserRole.USER);
 		Admin admin = new Admin(null,"admin","admin","admin@example.com",passwordEncoder().encode("1234"),null,null,null,true,UserRole.ADMIN);
 		clientRepo.save(cl);
 		adminRepo.save(admin);
-		Ticket ticket = new Ticket(null,"Atletico madrid vs Valencia CF", LocalDate.now(), LocalTime.now(),"Estadio el madrigal ,villarreal ,Spain ",100,"christian-pulisic-chelsea.jpg",200, StatusTicket.en_cours,null,null,null);
-		Ticket ticket1 = new Ticket(null,"Real madrid vs FC Barcelone", LocalDate.now(), LocalTime.now(),"Estadio el madrigal ,villarreal ,Spain 	",200,"christian-pulisic-chelsea.jpg",200, StatusTicket.en_cours,null,null,null);
-		Ticket ticket3 = new Ticket(null,"Chilsea vs FC Liverpool", LocalDate.now(), LocalTime.now(),"Estadio el madrigal ,villarreal ,Spain 	",400,"christian-pulisic-chelsea.jpg",200, StatusTicket.en_cours,null,null,null);
+		Ticket ticket = new Ticket(null,"Atletico madrid vs Valencia CF", LocalDate.now(), LocalTime.now(),"Estadio el madrigal ,villarreal ,Spain ",100,"christian-pulisic-chelsea.jpg",ZoneTicket.zone_1.getValue(),200, StatusTicket.en_cours,null,null,null);
+		Ticket ticket1 = new Ticket(null,"Real madrid vs FC Barcelone", LocalDate.now(), LocalTime.now(),"Estadio el madrigal ,villarreal ,Spain 	",200,"christian-pulisic-chelsea.jpg",ZoneTicket.zone_2.getValue(),200, StatusTicket.en_cours,null,null,null);
+		Ticket ticket3 = new Ticket(null,"Chilsea vs FC Liverpool", LocalDate.now(), LocalTime.now(),"Estadio el madrigal ,villarreal ,Spain 	",400,"christian-pulisic-chelsea.jpg",ZoneTicket.zone_3.getValue(),200, StatusTicket.en_cours,null,null,null);
 
 		ticketRepo.save(ticket);
 		ticketRepo.save(ticket1);

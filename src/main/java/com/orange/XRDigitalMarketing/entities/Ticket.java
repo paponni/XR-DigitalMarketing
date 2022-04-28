@@ -2,6 +2,7 @@ package com.orange.XRDigitalMarketing.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.orange.XRDigitalMarketing.enumeration.StatusTicket;
+import com.orange.XRDigitalMarketing.enumeration.ZoneTicket;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class Ticket {
     private String lieuMatch ;
     private double prix ;
     private String photo ;
+    private int zoneTicket;
     private int nombreTicket;
     private StatusTicket statusTicket;
     @OneToMany
